@@ -53,7 +53,7 @@ end
 
 %iterate through every sampledPointClouds
 
-% for i = 1:1:length(idx)
+% for i = 1:1:length(idx) 
     i=2
     neighborhoods=neighbor.(['neighbor' num2str(idx(i))])
     numberOfNeighborhoods=length(neighborhoods);
@@ -65,6 +65,7 @@ end
     end
     for j = 1:length(neighborhoods)
     plot3(neighborhoods(j,1),neighborhoods(j,2),neighborhoods(j,3),'b.');
+%     xlim([0.3 .4]);
     hold on
     end
 
@@ -92,9 +93,9 @@ end
 parameterVector = fitQuadric(neighborhoods, numberOfNeighborhoods);
 
 % add output of median value to use if
-[normal, principalAxis] = estimateMedianCurvature(pointClouds, numberOfPoints, parameterVector);
+[normal, principalAxis] = estimateMedianCurvature(neighborhoods, numberOfNeighborhoods, parameterVector);
 %if median value >k
-[circleCenterX, circleCenterY, circleRadius, centroid, extent] = fitCylinder(pointClouds, numberOfPoints, normal, principalAxis);
+[circleCenterX, circleCenterY, circleRadius, centroid, extent] = fitCylinder(neighborhoods, numberOfNeighborhoods, normal, principalAxis);
 
 
 % end

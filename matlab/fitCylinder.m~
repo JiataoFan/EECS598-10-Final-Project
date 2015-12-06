@@ -10,12 +10,9 @@ function [circleCenterX, circleCenterY, circleRadius, centroid, extent] = fitCyl
     rotationPoints = rotationMatrix * rotationPoints;
     rotationPoints = rotationPoints';
     
-    rotationPointsBasis=rotationPoints;
-    
     for i = 1 : 1 : numberOfPoints
-    
+    rotationPointsBasis=rotationPoints;
     rotationPointsBasis(i,2)=0;
-    rotationPointsBasis
     end
     
     rotationPointsBasis=rotationMatrix'*rotationPointsBasis';
@@ -24,7 +21,7 @@ function [circleCenterX, circleCenterY, circleRadius, centroid, extent] = fitCyl
     for i = 1 : 1 : numberOfPoints
         
 %         plot3(rotationPoints(i, 1), rotationPoints(i, 3), rotationPoints(i, 2), 'c.');
-        plot3(rotationPointsBasis(i, 1), rotationPointsBasis(i, 2),rotationPointsBasis(i, 3), 'c.');
+        plot3(rotationPointsBasis(i, 1), rotationPointsBasis(i, 3),rotationPointsBasis(i, 2), 'c.');
         hold on;
 
     end
