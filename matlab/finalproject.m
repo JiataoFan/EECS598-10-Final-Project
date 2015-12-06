@@ -15,7 +15,7 @@ pointCloudsRaw=load('eight_objects.pcd');
 
 numberOfPointsRaw=length(pointCloudsRaw);
 
-numberOfPoints
+% numberOfPoints
 for i=1:numberOfPointsRaw
     
     if isfinite(pointCloudsRaw(i,1))==1 && isfinite(pointCloudsRaw(i,2))==1 && isfinite(pointCloudsRaw(i,3))==1
@@ -50,30 +50,51 @@ for i=1:length(idx)
 end
 
 %Accesing each neighborhood
-neighbor.(['neighbor' num2str(idx(2))])(2)
 
+%iterate through every sampledPointClouds
 
-numberOfPoints = layers * length(t);
-pointClouds = zeros(numberOfPoints, 3);
-
-for i = 1 : 1 : layers
-
-    for j = 1 : 1 : length(t)
-    
-        pointClouds((i - 1) * length(t) + j, 1) = X(j);
-        pointClouds((i - 1) * length(t) + j, 2) = Y(j);
-        pointClouds((i - 1) * length(t) + j, 3) = (i - 1) * 0.1;
-        
-        plot3(X(j), Y(j), (i - 1) * 0.1, 'r.');
-        hold on;
-
+% for i = 1:1:length(idx)
+    i=2
+    neighborhoods=neighbor.(['neighbor' num2str(idx(i))])
+    numberOfNeighborhoods=length(neighborhoods);
+    for k= 1: length(idx)
+        if sampledPointClouds(k,4)==idx(i)
+           plot3(sampledPointClouds(k,1),sampledPointClouds(k,2),sampledPointClouds(k,3),'ro')
+           hold on;
+        end
+    end
+    for j = 1:length(neighborhoods)
+    plot3(neighborhoods(j,1),neighborhoods(j,2),neighborhoods(j,3),'b.');
+    hold on
     end
 
-end
 
 
-parameterVector = fitQuadric(pointClouds, numberOfPoints);
+%numberOfPoints = layers * length(t);
+% pointClouds = zeros(numberOfPoints, 3);
+% 
+% for i = 1 : 1 : layers
+% 
+%     for j = 1 : 1 : length(t)
+%     
+%         pointClouds((i - 1) * length(t) + j, 1) = X(j);
+%         pointClouds((i - 1) * length(t) + j, 2) = Y(j);
+%         pointClouds((i - 1) * length(t) + j, 3) = (i - 1) * 0.1;
+%         
+%         plot3(X(j), Y(j), (i - 1) * 0.1, 'r.');
+%         hold on;
+% 
+%     end
+% 
+% end
 
+
+parameterVector = fitQuadric(neighborhoods, numberOfNeighborhoods);
+
+% add output of median value to use if
 [normal, principalAxis] = estimateMedianCurvature(pointClouds, numberOfPoints, parameterVector);
-
+%if median value >k
 [circleCenterX, circleCenterY, circleRadius, centroid, extent] = fitCylinder(pointClouds, numberOfPoints, normal, principalAxis);
+
+
+% end
