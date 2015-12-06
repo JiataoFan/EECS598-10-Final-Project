@@ -74,7 +74,7 @@ function [normal, principalAxis] = estimateMedianCurvature(pointClouds, numberOf
     principalAxis = cross(principalDirection, normal);
 
     hold on;
-    scale=20
+    scale=20;
     principalAxis=principalAxis/scale;
     principalDirection=principalDirection/scale;
     normal=normal/scale;
