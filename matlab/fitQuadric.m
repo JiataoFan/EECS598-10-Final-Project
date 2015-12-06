@@ -1,19 +1,19 @@
-function parameterVector = fitQuadric(pointClouds, numberOfPoints)
+function parameterVector = fitQuadric(neighborHood, numberOfNeighborhoodPoints)
 
     M = zeros(10, 10);
 
-    for i  = 1 : 1 : numberOfPoints
+    for i  = 1 : 1 : numberOfNeighborhoodPoints
    
         l = [   
-                pointClouds(i, 1) ^ 2;
-                pointClouds(i, 2) ^ 2;
-                pointClouds(i, 3) ^ 2;
-                pointClouds(i, 1) * pointClouds(i, 2);
-                pointClouds(i, 1) * pointClouds(i, 3);
-                pointClouds(i, 2) * pointClouds(i, 3);
-                pointClouds(i, 1);
-                pointClouds(i, 2);
-                pointClouds(i, 3);
+                neighborHood(i, 1) ^ 2;
+                neighborHood(i, 2) ^ 2;
+                neighborHood(i, 3) ^ 2;
+                neighborHood(i, 1) * neighborHood(i, 2);
+                neighborHood(i, 1) * neighborHood(i, 3);
+                neighborHood(i, 2) * neighborHood(i, 3);
+                neighborHood(i, 1);
+                neighborHood(i, 2);
+                neighborHood(i, 3);
                 1
             ];
         
@@ -23,14 +23,14 @@ function parameterVector = fitQuadric(pointClouds, numberOfPoints)
 
     N = zeros(10, 10);
 
-    for i  = 1: 1 : numberOfPoints
+    for i  = 1: 1 : numberOfNeighborhoodPoints
    
         l1 = [  
-                pointClouds(i, 1) * 2;
+                neighborHood(i, 1) * 2;
                 0;
                 0;
-                pointClouds(i, 2);
-                pointClouds(i, 3);
+                neighborHood(i, 2);
+                neighborHood(i, 3);
                 0;
                 1;
                 0;
@@ -42,11 +42,11 @@ function parameterVector = fitQuadric(pointClouds, numberOfPoints)
    
         l2 = [  
                 0;
-                pointClouds(i, 2) * 2;
+                neighborHood(i, 2) * 2;
                 0;
-                pointClouds(i, 1);
+                neighborHood(i, 1);
                 0;
-                pointClouds(i, 3);
+                neighborHood(i, 3);
                 0;
                 1;
                 0;
@@ -58,10 +58,10 @@ function parameterVector = fitQuadric(pointClouds, numberOfPoints)
         l3 = [  
                 0;
                 0;
-                pointClouds(i, 3) * 2;
+                neighborHood(i, 3) * 2;
                 0;
-                pointClouds(i, 1);
-                pointClouds(i, 2);
+                neighborHood(i, 1);
+                neighborHood(i, 2);
                 0;
                 0;
                 1;

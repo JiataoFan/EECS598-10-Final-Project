@@ -113,12 +113,13 @@ end
 % end
 
 
-%parameterVector = fitQuadric(neighborhood, numberOfNeighborhoodPoints);
+parameterVector = fitQuadric(neighborhood, numberOfNeighborhoodPoints);
 
 % add output of median value to use if
-%[normal, principalAxis] = estimateMedianCurvature(pointClouds, numberOfPoints, parameterVector);
-%if median value >k
-%[circleCenterX, circleCenterY, circleRadius, centroid, extent] = fitCylinder(pointClouds, numberOfPoints, normal, principalAxis);
+[normal, principalAxis] = estimateMedianCurvature(neighborhood, numberOfNeighborhoodPoints, parameterVector);
+
+%if median value >
+[circleCenterX, circleCenterY, circleRadius, centroid, extent] = fitCylinder(neighborhood, numberOfNeighborhoodPoints, normal, principalAxis);
 
 
 % end
