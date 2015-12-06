@@ -77,6 +77,22 @@ end
 
 %iterate through every sampledPointClouds
 
+% for i = 1:1:length(idx) 
+    i=2;
+    neighborhoods=neighbor.(['neighbor' num2str(idx(i))]);
+    numberOfNeighborhoods=length(neighborhoods);
+    for k= 1: length(idx)
+        if sampledPointClouds(k,4)==idx(i)
+           plot3(sampledPointClouds(k,1),sampledPointClouds(k,2),sampledPointClouds(k,3),'ro')
+           hold on;
+        end
+    end
+    for j = 1:length(neighborhoods)
+    plot3(neighborhoods(j,1),neighborhoods(j,2),neighborhoods(j,3),'b.');
+%     xlim([0.3 .4]);
+    hold on
+    end
+
 % for i = 1:1:length(idx)
     i = 2;
     neighborhood = neighborhoods.(['neighborhood' num2str(i)]);

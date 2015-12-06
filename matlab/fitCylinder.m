@@ -15,7 +15,7 @@ function [circleCenterX, circleCenterY, circleRadius, centroid, extent] = fitCyl
     for i = 1 : 1 : numberOfPoints
     
     rotationPointsBasis(i,2)=0;
-    rotationPointsBasis
+    
     end
     
     rotationPointsBasis=rotationMatrix'*rotationPointsBasis';
