@@ -116,10 +116,10 @@ end
 parameterVector = fitQuadric(neighborhood, numberOfNeighborhoodPoints);
 
 % add output of median value to use if
+
 [normal, principalAxis] = estimateMedianCurvature(neighborhood, numberOfNeighborhoodPoints, parameterVector);
 
 %if median value >
 [circleCenterX, circleCenterY, circleRadius, centroid, extent] = fitCylinder(neighborhood, numberOfNeighborhoodPoints, normal, principalAxis);
-
 
 % end

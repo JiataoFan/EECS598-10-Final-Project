@@ -3,6 +3,7 @@ function [normal, principalAxis] = estimateMedianCurvature(neighborHood, numberO
     curvatures  = zeros(numberOfNeighborhoodPoints, 2);
     principalDirections = zeros(numberOfNeighborhoodPoints, 3);
 
+
     deltaNx = [
                     2 * parameterVector(1), parameterVector(4), parameterVector(6);
                     parameterVector(4), 2 * parameterVector(2), parameterVector(5);
@@ -16,6 +17,7 @@ function [normal, principalAxis] = estimateMedianCurvature(neighborHood, numberO
         dx = 2 * parameterVector(1) * neighborHood(i, 1) + parameterVector(4) * neighborHood(i, 2) + parameterVector(6) * neighborHood(i, 3) + parameterVector(7);
         dy = 2 * parameterVector(2) * neighborHood(i, 2) + parameterVector(4) * neighborHood(i, 1) + parameterVector(5) * neighborHood(i, 3) + parameterVector(8);
         dz = 2 * parameterVector(3) * neighborHood(i, 3) + parameterVector(5) * neighborHood(i, 2) + parameterVector(6) * neighborHood(i, 1) + parameterVector(9);
+
 
         gradient = [
                         dx;
@@ -73,9 +75,14 @@ function [normal, principalAxis] = estimateMedianCurvature(neighborHood, numberO
 
     principalAxis = cross(principalDirection, normal);
 
+    scale = 20;
+    principalAxisDisplay = principalAxis/scale;
+    principalDirectionDisplay = principalDirection/scale;
+    normalDisplay = normal/scale;
+    
+    quiver3(neighborHood(indexMedianCurvature, 1), neighborHood(indexMedianCurvature, 2), neighborHood(indexMedianCurvature, 3), principalAxisDisplay(1), principalAxisDisplay(2), principalAxisDisplay(3), 'y');
+    quiver3(neighborHood(indexMedianCurvature, 1), neighborHood(indexMedianCurvature, 2), neighborHood(indexMedianCurvature, 3), normalDisplay(1), normalDisplay(2), normalDisplay(3),'b');
+    quiver3(neighborHood(indexMedianCurvature, 1), neighborHood(indexMedianCurvature, 2), neighborHood(indexMedianCurvature, 3), principalDirectionDisplay(1), principalDirectionDisplay(2), principalDirectionDisplay(3), 'g');
     hold on;
-    quiver3(neighborHood(indexMedianCurvature, 1), neighborHood(indexMedianCurvature, 2), neighborHood(indexMedianCurvature, 3), principalAxis(1), principalAxis(2), principalAxis(3), 'y');
-    quiver3(neighborHood(indexMedianCurvature, 1), neighborHood(indexMedianCurvature, 2), neighborHood(indexMedianCurvature, 3), normal(1), normal(2), normal(3), 'b');
-    quiver3(neighborHood(indexMedianCurvature, 1), neighborHood(indexMedianCurvature, 2), neighborHood(indexMedianCurvature, 3), principalDirection(1), principalDirection(2), principalDirection(3), 'g');
 
 end

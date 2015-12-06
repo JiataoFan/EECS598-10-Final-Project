@@ -3,6 +3,7 @@ function [normal, principalAxis] = estimateMedianCurvature(neighborHood, numberO
     curvatures  = zeros(numberOfNeighborhoodPoints, 2);
     principalDirections = zeros(numberOfNeighborhoodPoints, 3);
 
+
     deltaNx = [
                     2 * parameterVector(1), parameterVector(4), parameterVector(6);
                     parameterVector(4), 2 * parameterVector(2), parameterVector(5);
@@ -16,6 +17,7 @@ function [normal, principalAxis] = estimateMedianCurvature(neighborHood, numberO
         dx = 2 * parameterVector(1) * neighborHood(i, 1) + parameterVector(4) * neighborHood(i, 2) + parameterVector(6) * neighborHood(i, 3) + parameterVector(7);
         dy = 2 * parameterVector(2) * neighborHood(i, 2) + parameterVector(4) * neighborHood(i, 1) + parameterVector(5) * neighborHood(i, 3) + parameterVector(8);
         dz = 2 * parameterVector(3) * neighborHood(i, 3) + parameterVector(5) * neighborHood(i, 2) + parameterVector(6) * neighborHood(i, 1) + parameterVector(9);
+
 
         gradient = [
                         dx;
@@ -74,8 +76,18 @@ function [normal, principalAxis] = estimateMedianCurvature(neighborHood, numberO
     principalAxis = cross(principalDirection, normal);
 
     hold on;
-    quiver3(neighborHood(indexMedianCurvature, 1), neighborHood(indexMedianCurvature, 2), neighborHood(indexMedianCurvature, 3), principalAxis(1), principalAxis(2), principalAxis(3), 'y');
-    quiver3(neighborHood(indexMedianCurvature, 1), neighborHood(indexMedianCurvature, 2), neighborHood(indexMedianCurvature, 3), normal(1), normal(2), normal(3), 'b');
-    quiver3(neighborHood(indexMedianCurvature, 1), neighborHood(indexMedianCurvature, 2), neighborHood(indexMedianCurvature, 3), principalDirection(1), principalDirection(2), principalDirection(3), 'g');
+
+    scale=20;
+    principalAxis=principalAxis/scale;
+    principalDirection=principalDirection/scale;
+    normal=normal/scale;
+    
+    quiver3(pointClouds(indexMedianCurvature, 1), pointClouds(indexMedianCurvature, 2), pointClouds(indexMedianCurvature, 3), principalAxis(1), principalAxis(2), principalAxis(3), 'y');
+    quiver3(pointClouds(indexMedianCurvature, 1), pointClouds(indexMedianCurvature, 2), pointClouds(indexMedianCurvature, 3), normal(1), normal(2), normal(3),'b');
+    quiver3(pointClouds(indexMedianCurvature, 1), pointClouds(indexMedianCurvature, 2), pointClouds(indexMedianCurvature, 3), principalDirection(1), principalDirection(2), principalDirection(3), 'g');
+    
+    principalAxis = principalAxis * scale;
+    principalDirection = principalDirection * scale;
+    normal = normal * scale;
 
 end
