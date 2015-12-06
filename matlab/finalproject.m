@@ -1,5 +1,3 @@
-% clear all
-
 %helix
 layers = 7;
 t = 0:pi/200:pi;
@@ -8,45 +6,71 @@ X = sin(t);
 Y = cos(t);
 
 %% extract data from pointcloud
-pointClouds=[];
-indices=[];
-pointCloudsRow=[];
-pointCloudsRaw=load('eight_objects.pcd');
 
-numberOfPointsRaw=length(pointCloudsRaw);
+pointCloudsRaw = load('eight_objects.pcd');
 
-% numberOfPoints
-for i=1:numberOfPointsRaw
+numberOfPointsRaw = length(pointCloudsRaw);
+
+indices = zeros(numberOfPointsRaw, 1);
+
+pointClouds = zeros(numberOfPointsRaw, 3);
+
+numberOfPoints = 0;
+for i = 1 : numberOfPointsRaw
     
-    if isfinite(pointCloudsRaw(i,1))==1 && isfinite(pointCloudsRaw(i,2))==1 && isfinite(pointCloudsRaw(i,3))==1
-        indices=[indices;i];
-        
-        pointCloudsRow=pointCloudsRaw(i,:);
-        pointClouds=[pointClouds;pointCloudsRow];
+    if isfinite(pointCloudsRaw(i, 1)) && isfinite(pointCloudsRaw(i, 2)) && isfinite(pointCloudsRaw(i, 3))
+
+        numberOfPoints = numberOfPoints + 1;
+
+        indices(numberOfPoints, 1) = i;
+
+        pointClouds(numberOfPoints, :) = pointCloudsRaw(i, :);
+
     end
+
 end
 
-numberOfPoints=length(pointClouds)
+indices = indices(1 : numberOfPoints, :);
+
+pointClouds = pointClouds(1 : numberOfPoints, :);
 
 %% sampling
+numberOfNeighborhoodCentroids = 100;
 
+[neighborhoodCentroids, neighborhoodCentroidsIndices] = datasample(pointClouds, numberOfNeighborhoodCentroids);
+neighborhoodCentroidsIndices = neighborhoodCentroidsIndices';
+neighborhoodCentroids = [neighborhoodCentroids neighborhoodCentroidsIndices];
+neighborhoods = struct();
 
-numberOfNeighborCenter=100
+for i = 1 : numberOfNeighborhoodCentroids
 
-[sampledPointClouds,idx]=datasample(pointClouds,numberOfNeighborCenter);
-idx=idx'
-sampledPointClouds=[sampledPointClouds idx];
-neighbor=struct();
-neighborPoints=[];
-for i=1:length(idx)
-    for j=1:numberOfPoints
-        if sqrt((sampledPointClouds(i,1)-pointClouds(j,1))^2+(sampledPointClouds(i,2)-pointClouds(j,2))^2+(sampledPointClouds(i,3)-pointClouds(j,3))^2) < 0.01            
-            l=['neighbor' num2str(sampledPointClouds(i,4))];
-            neighborPoints=[neighborPoints;pointClouds(j,:)];
-            neighbor.(l)=neighborPoints;
+    singleNeighborhoodPoints = zeros(numberOfPoints, 3);
+    numberOfSingleNeighborhoodPoints = 0;
+    
+    for j = 1 : numberOfPoints
+        
+        xNormSquare = (neighborhoodCentroids(i, 1) - pointClouds(j, 1)) ^ 2;
+        yNormSquare = (neighborhoodCentroids(i, 2) - pointClouds(j, 2)) ^ 2;
+        zNormSquare = (neighborhoodCentroids(i, 3) - pointClouds(j, 3)) ^ 2;
+        
+        distance = sqrt(xNormSquare +  yNormSquare + zNormSquare);
+
+        if  distance < 0.01
+            
+            numberOfSingleNeighborhoodPoints = numberOfSingleNeighborhoodPoints + 1;
+            
+            singleNeighborhoodPoints(numberOfSingleNeighborhoodPoints, :) = pointClouds(j, :);
+            
         end
+        
     end
-    neighborPoints=[];
+    
+    l = ['neighborhood' num2str(i)];
+    
+    singleNeighborhoodPoints = singleNeighborhoodPoints(1 : numberOfSingleNeighborhoodPoints, :);
+    
+    neighborhoods.(l) = singleNeighborhoodPoints;
+
 end
 
 %Accesing each neighborhood
@@ -54,21 +78,21 @@ end
 %iterate through every sampledPointClouds
 
 % for i = 1:1:length(idx)
-    i=2
-    neighborhoods=neighbor.(['neighbor' num2str(idx(i))])
-    numberOfNeighborhoods=length(neighborhoods);
-    for k= 1: length(idx)
-        if sampledPointClouds(k,4)==idx(i)
-           plot3(sampledPointClouds(k,1),sampledPointClouds(k,2),sampledPointClouds(k,3),'ro')
-           hold on;
-        end
-    end
-    for j = 1:length(neighborhoods)
-    plot3(neighborhoods(j,1),neighborhoods(j,2),neighborhoods(j,3),'b.');
-    hold on
+    i = 2;
+    neighborhood = neighborhoods.(['neighborhood' num2str(i)]);
+    numberOfNeighborhoodPoints = length(neighborhood);
+
+    plot3(neighborhoodCentroids(i, 1), neighborhoodCentroids(i, 2), neighborhoodCentroids(i, 3), 'ro')
+    hold on;
+    
+    for j = 1 : numberOfNeighborhoodPoints
+    
+        plot3(neighborhood(j, 1), neighborhood(j, 2), neighborhood(j, 3), 'b.');
+        hold on
+        
     end
 
-
+    %end
 
 %numberOfPoints = layers * length(t);
 % pointClouds = zeros(numberOfPoints, 3);
@@ -89,12 +113,12 @@ end
 % end
 
 
-parameterVector = fitQuadric(neighborhoods, numberOfNeighborhoods);
+%parameterVector = fitQuadric(neighborhood, numberOfNeighborhoodPoints);
 
 % add output of median value to use if
-[normal, principalAxis] = estimateMedianCurvature(pointClouds, numberOfPoints, parameterVector);
+%[normal, principalAxis] = estimateMedianCurvature(pointClouds, numberOfPoints, parameterVector);
 %if median value >k
-[circleCenterX, circleCenterY, circleRadius, centroid, extent] = fitCylinder(pointClouds, numberOfPoints, normal, principalAxis);
+%[circleCenterX, circleCenterY, circleRadius, centroid, extent] = fitCylinder(pointClouds, numberOfPoints, normal, principalAxis);
 
 
 % end
