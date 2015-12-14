@@ -1,22 +1,22 @@
-function gapClearance = hasClearance (pointClouds, numberOfPoints, principalAxis, centroid, circleRadius)
+function gapClearance = hasClearance (neighborHood, numberOfNeighborhoodPoints, principalAxis, centroid, circleRadius, extent)
 
     %min number of points required to be within the inner cylinder
     minPointsInner = 40;
     %threshold below which the gap is considered to be large enough
     gapThreshold = 5;
 
-    croppedPoints = zeros(numberOfPoints, 3);
+    croppedPoints = zeros(numberOfNeighborhoodPoints, 3);
     numberCroppedPoints = 0;
-    for i = 1 : 1 : numberOfPoints
+    for i = 1 : 1 : numberOfNeighborhoodPoints
    
-        cropped = pointClouds(i, :);
+        cropped = neighborHood(i, :);
     
         axialDistance = dot(principalAxis, cropped - centroid);
     
         if abs(axialDistance) < extent / 2;
     
             numberCroppedPoints = numberCroppedPoints + 1;
-            croppedPoints(i, :) = pointClouds(i, :);
+            croppedPoints(i, :) = neighborHood(i, :);
 
         end
 
@@ -33,7 +33,7 @@ function gapClearance = hasClearance (pointClouds, numberOfPoints, principalAxis
 
     %need max hand aperture and handle gap; unify scaling: cm? mm?
     maxHandAperture = 0.093;
-    handleGap = 0.08;
+    handleGap = 0.20;
     for radius = circleRadius : 0.001 : maxHandAperture
     
         numberOfPointsInGap = sum((normalDistance > radius) & (normalDistance < (radius + handleGap)));

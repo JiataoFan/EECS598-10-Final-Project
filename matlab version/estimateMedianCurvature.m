@@ -1,7 +1,8 @@
-function [normal, principalAxis] = estimateMedianCurvature(pointClouds, numberOfPoints, parameterVector)
+function [curvature, normal, principalAxis] = estimateMedianCurvature(neighborHood, numberOfNeighborhoodPoints, parameterVector)
 
-    curvatures  = zeros(numberOfPoints, 2);
-    principalDirections = zeros(numberOfPoints, 3);
+    curvatures  = zeros(numberOfNeighborhoodPoints, 2);
+    principalDirections = zeros(numberOfNeighborhoodPoints, 3);
+
 
     deltaNx = [
                     2 * parameterVector(1), parameterVector(4), parameterVector(6);
@@ -9,13 +10,14 @@ function [normal, principalAxis] = estimateMedianCurvature(pointClouds, numberOf
                     parameterVector(6), parameterVector(5), 2 * parameterVector(3);
               ];
 
-    for i  = 1: 1 : numberOfPoints
+    for i  = 1: 1 : numberOfNeighborhoodPoints
    
         identityMatrix = eye(3);
     
-        dx = 2 * parameterVector(1) * pointClouds(i, 1) + parameterVector(4) * pointClouds(i, 2) + parameterVector(6) * pointClouds(i, 3) + parameterVector(7);
-        dy = 2 * parameterVector(2) * pointClouds(i, 2) + parameterVector(4) * pointClouds(i, 1) + parameterVector(5) * pointClouds(i, 3) + parameterVector(8);
-        dz = 2 * parameterVector(3) * pointClouds(i, 3) + parameterVector(5) * pointClouds(i, 2) + parameterVector(6) * pointClouds(i, 1) + parameterVector(9);
+        dx = 2 * parameterVector(1) * neighborHood(i, 1) + parameterVector(4) * neighborHood(i, 2) + parameterVector(6) * neighborHood(i, 3) + parameterVector(7);
+        dy = 2 * parameterVector(2) * neighborHood(i, 2) + parameterVector(4) * neighborHood(i, 1) + parameterVector(5) * neighborHood(i, 3) + parameterVector(8);
+        dz = 2 * parameterVector(3) * neighborHood(i, 3) + parameterVector(5) * neighborHood(i, 2) + parameterVector(6) * neighborHood(i, 1) + parameterVector(9);
+
 
         gradient = [
                         dx;
@@ -46,21 +48,23 @@ function [normal, principalAxis] = estimateMedianCurvature(pointClouds, numberOf
 
     curvatures = sortrows(curvatures);
 
-    if mod(numberOfPoints, 2) == 0;
+    if mod(numberOfNeighborhoodPoints, 2) == 0
     
-        indexMedianCurvature = curvatures(numberOfPoints / 2, 2);
+        curvature = curvatures(numberOfNeighborhoodPoints / 2, 1);
+        indexMedianCurvature = curvatures(numberOfNeighborhoodPoints / 2, 2);
     
-    elseif mod(numberOfPoints, 2) ~= 0;
+    else
     
-        indexMedianCurvature = curvatures((numberOfPoints + 1) / 2, 2);
+        curvature = curvatures((numberOfNeighborhoodPoints + 1) / 2, 1);
+        indexMedianCurvature = curvatures((numberOfNeighborhoodPoints + 1) / 2, 2);
     
     end
 
     principalDirection = principalDirections(indexMedianCurvature, :);
 
-    normalX = 2 * parameterVector(1) * pointClouds(indexMedianCurvature, 1) + parameterVector(4) * pointClouds(indexMedianCurvature, 2) + parameterVector(6) * pointClouds(indexMedianCurvature, 3) + parameterVector(7);
-    normalY = 2 * parameterVector(2) * pointClouds(indexMedianCurvature, 2) + parameterVector(4) * pointClouds(indexMedianCurvature, 1) + parameterVector(5) * pointClouds(indexMedianCurvature, 3) + parameterVector(8);
-    normalZ = 2 * parameterVector(3) * pointClouds(indexMedianCurvature, 3) + parameterVector(5) * pointClouds(indexMedianCurvature, 2) + parameterVector(6) * pointClouds(indexMedianCurvature, 1) + parameterVector(9);
+    normalX = 2 * parameterVector(1) * neighborHood(indexMedianCurvature, 1) + parameterVector(4) * neighborHood(indexMedianCurvature, 2) + parameterVector(6) * neighborHood(indexMedianCurvature, 3) + parameterVector(7);
+    normalY = 2 * parameterVector(2) * neighborHood(indexMedianCurvature, 2) + parameterVector(4) * neighborHood(indexMedianCurvature, 1) + parameterVector(5) * neighborHood(indexMedianCurvature, 3) + parameterVector(8);
+    normalZ = 2 * parameterVector(3) * neighborHood(indexMedianCurvature, 3) + parameterVector(5) * neighborHood(indexMedianCurvature, 2) + parameterVector(6) * neighborHood(indexMedianCurvature, 1) + parameterVector(9);
 
     normal = [
             normalX;
@@ -73,9 +77,14 @@ function [normal, principalAxis] = estimateMedianCurvature(pointClouds, numberOf
 
     principalAxis = cross(principalDirection, normal);
 
-    hold on;
-    quiver3(pointClouds(indexMedianCurvature, 1), pointClouds(indexMedianCurvature, 2), pointClouds(indexMedianCurvature, 3), principalAxis(1), principalAxis(2), principalAxis(3), 'y');
-    quiver3(pointClouds(indexMedianCurvature, 1), pointClouds(indexMedianCurvature, 2), pointClouds(indexMedianCurvature, 3), normal(1), normal(2), normal(3), 'b');
-    quiver3(pointClouds(indexMedianCurvature, 1), pointClouds(indexMedianCurvature, 2), pointClouds(indexMedianCurvature, 3), principalDirection(1), principalDirection(2), principalDirection(3), 'g');
+    scale = 20;
+    principalAxisDisplay = principalAxis/scale;
+    principalDirectionDisplay = principalDirection/scale;
+    normalDisplay = normal/scale;
+    
+   % quiver3(neighborHood(indexMedianCurvature, 1), neighborHood(indexMedianCurvature, 2), neighborHood(indexMedianCurvature, 3), principalAxisDisplay(1), principalAxisDisplay(2), principalAxisDisplay(3), 'y');
+   % quiver3(neighborHood(indexMedianCurvature, 1), neighborHood(indexMedianCurvature, 2), neighborHood(indexMedianCurvature, 3), normalDisplay(1), normalDisplay(2), normalDisplay(3),'b');
+    %quiver3(neighborHood(indexMedianCurvature, 1), neighborHood(indexMedianCurvature, 2), neighborHood(indexMedianCurvature, 3), principalDirectionDisplay(1), principalDirectionDisplay(2), principalDirectionDisplay(3), 'g');
+    %hold on;
 
 end
