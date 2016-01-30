@@ -35,17 +35,18 @@ indices = indices(1 : numberOfPoints, :);
 pointClouds = pointClouds(1 : numberOfPoints, :);
 
 %  Irina Code
-% pointCloudsTrans = pointClouds';
-% 
-% angle = 2.6*pi/4;
-% rotationmat = [ 1, 0, 0;
-%                 0, cos(angle), -sin(angle);
-%                 0, sin(angle),  cos(angle)];
-% 
-% pointClouds = (rotationmat * pointCloudsTrans)';
+pointCloudsTrans = pointClouds';
+
+angle = 2.6*pi/4;
+rotationmat = [ 1, 0, 0;
+                0, cos(angle), -sin(angle);
+                0, sin(angle),  cos(angle)];
+
+pointClouds = (rotationmat * pointCloudsTrans)';
 
 % visualize point cloud
 figure1 = figure;
+axis equal;
 plot3(pointClouds(:, 1), pointClouds(:, 2), pointClouds(:, 3), 'k.')
 hold on;
 
@@ -208,103 +209,104 @@ for i = 1 : numberOfGapFilteredNeighborhoodsIndices
     
 end
 
-for i = 0 : 20 : 360
-    
-    view(i, -30);
-    refresh;
-    drawnow;
-    saveas(figure1, ['allGraspableAreas' num2str(i) '.jpg']);
-    
-end
+% for i = 0 : 20 : 360
+%     
+%     view(i, -30);
+%     refresh;
+%     drawnow;
+%     saveas(figure1, ['allGraspableAreas' num2str(i) '.jpg']);
+%     
+% end
 
 
 %% sort the graspable areas according to their altitude
-
-for i = 2 : numberOfGapFilteredNeighborhoodsIndices
-   
-    j = i;
-    while j > 1 && neighborhoodCentroids(filteredNeighborhoodsIndices(gapFilteredNeighborhoodsIndices(j - 1)), 3) > neighborhoodCentroids(filteredNeighborhoodsIndices(gapFilteredNeighborhoodsIndices(j)), 3)
-
-        temp =  gapFilteredNeighborhoodsIndices(j);
-        gapFilteredNeighborhoodsIndices(j) = gapFilteredNeighborhoodsIndices(j-1);
-        gapFilteredNeighborhoodsIndices(j-1) = temp;
-        
-        j = j - 1;
-
-    end
-    
-end
+% 
+% for i = 2 : numberOfGapFilteredNeighborhoodsIndices
+%    
+%     j = i;
+%     while j > 1 && neighborhoodCentroids(filteredNeighborhoodsIndices(gapFilteredNeighborhoodsIndices(j - 1)), 3) > neighborhoodCentroids(filteredNeighborhoodsIndices(gapFilteredNeighborhoodsIndices(j)), 3)
+% 
+%         temp =  gapFilteredNeighborhoodsIndices(j);
+%         gapFilteredNeighborhoodsIndices(j) = gapFilteredNeighborhoodsIndices(j-1);
+%         gapFilteredNeighborhoodsIndices(j-1) = temp;
+%         
+%         j = j - 1;
+% 
+%     end
+%     
+% end
 
 %% find the graspable area with the highest altitude
-% 
-% graspableNeighborhoodCentroids = zeros(numberOfGapFilteredNeighborhoodsIndices, 3);
-% for i = 1 : numberOfGapFilteredNeighborhoodsIndices
-% 
-%     graspableNeighborhoodCentroids(i, :) = neighborhoodCentroids(filteredNeighborhoodsIndices(gapFilteredNeighborhoodsIndices(i)), 1 : 3);
-% 
-% end
-% 
-% graspableNeighborhoodCentroids = (rotationmat' * graspableNeighborhoodCentroids')';
-% 
-% [highestGraspableCentroidZ, highestGraspableCentroidIndex] = min(graspableNeighborhoodCentroids(:, 3));
+
+graspableNeighborhoodCentroids = zeros(numberOfGapFilteredNeighborhoodsIndices, 3);
+for i = 1 : numberOfGapFilteredNeighborhoodsIndices
+
+    graspableNeighborhoodCentroids(i, :) = neighborhoodCentroids(filteredNeighborhoodsIndices(gapFilteredNeighborhoodsIndices(i)), 1 : 3);
+
+end
+
+graspableNeighborhoodCentroids = (rotationmat' * graspableNeighborhoodCentroids')';
+
+[highestGraspableCentroidZ, highestGraspableCentroidIndex] = min(graspableNeighborhoodCentroids(:, 3));
 
 %% visualization
-% 
-% figure
-% plot3(pointClouds(:, 1), pointClouds(:, 2), pointClouds(:, 3), 'k.');
-% hold on;
-% 
-% neighborhood = neighborhoods.(['neighborhood' num2str(filteredNeighborhoodsIndices(gapFilteredNeighborhoodsIndices(highestGraspableCentroidIndex)))]);
-% 
-% plot3(neighborhood(:, 1), neighborhood(:, 2), neighborhood(:, 3), 'g.');
-% hold on;
-% 
-% normal = normals(filteredNeighborhoodsIndices(gapFilteredNeighborhoodsIndices(highestGraspableCentroidIndex)), :);
-% principalAxis = principalAxes(filteredNeighborhoodsIndices(gapFilteredNeighborhoodsIndices(highestGraspableCentroidIndex)), :);
-% neighborhoodCentroid = neighborhoodCentroids(filteredNeighborhoodsIndices(gapFilteredNeighborhoodsIndices(highestGraspableCentroidIndex)), :);
-% 
-% quiver3(neighborhoodCentroid(1, 1), neighborhoodCentroid(1, 2), neighborhoodCentroid(1, 3), normal(1,1), normal(1,2), normal(1,3), 'b');
-% quiver3(neighborhoodCentroid(1, 1), neighborhoodCentroid(1, 2), neighborhoodCentroid(1, 3), principalAxis(1,1), principalAxis(1,2), principalAxis(1,3), 'y');
-% hold on;
-% 
-% normal = (rotationmat' * normal')';
-% principalAxis = (rotationmat' * principalAxis')';
-% neighborhoodCentroid = (rotationmat' * neighborhoodCentroid(1:3)')';
-% 
-% matlab_ros_c(normal, principalAxis, neighborhoodCentroid);
+
+figure
+axis equal;
+plot3(pointClouds(:, 1), pointClouds(:, 2), pointClouds(:, 3), 'k.');
+hold on;
+
+neighborhood = neighborhoods.(['neighborhood' num2str(filteredNeighborhoodsIndices(gapFilteredNeighborhoodsIndices(highestGraspableCentroidIndex)))]);
+
+plot3(neighborhood(:, 1), neighborhood(:, 2), neighborhood(:, 3), 'g.');
+hold on;
+
+normal = normals(filteredNeighborhoodsIndices(gapFilteredNeighborhoodsIndices(highestGraspableCentroidIndex)), :);
+principalAxis = principalAxes(filteredNeighborhoodsIndices(gapFilteredNeighborhoodsIndices(highestGraspableCentroidIndex)), :);
+neighborhoodCentroid = neighborhoodCentroids(filteredNeighborhoodsIndices(gapFilteredNeighborhoodsIndices(highestGraspableCentroidIndex)), :);
+
+quiver3(neighborhoodCentroid(1, 1), neighborhoodCentroid(1, 2), neighborhoodCentroid(1, 3), normal(1,1), normal(1,2), normal(1,3), 'b');
+quiver3(neighborhoodCentroid(1, 1), neighborhoodCentroid(1, 2), neighborhoodCentroid(1, 3), principalAxis(1,1), principalAxis(1,2), principalAxis(1,3), 'y');
+hold on;
+
+normal = (rotationmat' * normal')';
+principalAxis = (rotationmat' * principalAxis')';
+neighborhoodCentroid = (rotationmat' * neighborhoodCentroid(1:3)')';
+
+matlab_ros_c(normal, principalAxis, neighborhoodCentroid);
 
 %% simulate multi-object task
 
-newPointClouds = pointClouds;
-newNumberOfPoints = numberOfPoints;
-
-for i = 1 : numberOfGapFilteredNeighborhoodsIndices
-
-    neighborhoodCentroid = neighborhoodCentroids(filteredNeighborhoodsIndices(gapFilteredNeighborhoodsIndices(i)), :);
-
-    graspSimulationVisualization(newPointClouds, neighborhoodCentroid, ['before' num2str(i) '.jpg']);
-
-    j = 1;
-    while j <= newNumberOfPoints
-
-        deltaX = abs(newPointClouds(j, 1) - neighborhoodCentroid(1));
-        deltaY = abs(newPointClouds(j, 2) - neighborhoodCentroid(2));
-        deltaZ = abs(newPointClouds(j, 3) - neighborhoodCentroid(3));
-
-        if deltaX < 0.1 && deltaY < 0.1 && deltaZ < 0.1
-
-            newPointClouds(j, :) = [];
-            
-            newNumberOfPoints = newNumberOfPoints - 1;
- 
-        else
-           
-            j = j + 1;
-            
-        end
-
-    end
-
-   graspSimulationVisualization(newPointClouds, neighborhoodCentroid, ['after' num2str(i) '.jpg']);
-    
-end
+% newPointClouds = pointClouds;
+% newNumberOfPoints = numberOfPoints;
+% 
+% for i = 1 : numberOfGapFilteredNeighborhoodsIndices
+% 
+%     neighborhoodCentroid = neighborhoodCentroids(filteredNeighborhoodsIndices(gapFilteredNeighborhoodsIndices(i)), :);
+% 
+%     graspSimulationVisualization(newPointClouds, neighborhoodCentroid, ['before' num2str(i) '.jpg']);
+% 
+%     j = 1;
+%     while j <= newNumberOfPoints
+% 
+%         deltaX = abs(newPointClouds(j, 1) - neighborhoodCentroid(1));
+%         deltaY = abs(newPointClouds(j, 2) - neighborhoodCentroid(2));
+%         deltaZ = abs(newPointClouds(j, 3) - neighborhoodCentroid(3));
+% 
+%         if deltaX < 0.1 && deltaY < 0.1 && deltaZ < 0.1
+% 
+%             newPointClouds(j, :) = [];
+%             
+%             newNumberOfPoints = newNumberOfPoints - 1;
+%  
+%         else
+% 
+%             j = j + 1;
+% 
+%         end
+% 
+%     end
+% 
+%    graspSimulationVisualization(newPointClouds, neighborhoodCentroid, ['after' num2str(i) '.jpg']);
+% 
+% end
