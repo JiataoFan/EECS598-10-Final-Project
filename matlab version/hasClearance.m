@@ -1,8 +1,11 @@
+% function to ensure there is a gap outside the neighborhood that is wide
+% enough to let robot hand to fit in
+
 function gapClearance = hasClearance (neighborHood, numberOfNeighborhoodPoints, principalAxis, centroid, circleRadius, extent)
 
-    %min number of points required to be within the inner cylinder
+    % min number of points required to be within the inner cylinder
     minPointsInner = 40;
-    %threshold below which the gap is considered to be large enough
+    % threshold below which the gap is considered to be large enough
     gapThreshold = 5;
 
     croppedPoints = zeros(numberOfNeighborhoodPoints, 3);
@@ -31,9 +34,12 @@ function gapClearance = hasClearance (neighborHood, numberOfNeighborhoodPoints, 
     normalDistance = sqrt(sum(normalDifference.^2));
 
 
-    %need max hand aperture and handle gap; unify scaling: cm? mm?
+    % need max hand aperture
     maxHandAperture = 0.093;
+    % width of the gap to let robot hand to fit in
     handleGap = 0.20;
+    
+    % linear search for the outer shell
     for radius = circleRadius : 0.001 : maxHandAperture
     
         numberOfPointsInGap = sum((normalDistance > radius) & (normalDistance < (radius + handleGap)));

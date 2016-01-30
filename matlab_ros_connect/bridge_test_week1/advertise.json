@@ -1,0 +1,5 @@
+{ 
+  "op": "advertise",
+  "topic": "/cmd_vel",
+  "type": "geometry_msgs/Twist"
+}

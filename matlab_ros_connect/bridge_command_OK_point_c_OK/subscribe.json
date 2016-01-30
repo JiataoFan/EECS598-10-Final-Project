@@ -1,0 +1,5 @@
+{
+	"op":"subscribe",
+    "topic":"/head_camera/depth/points"
+        
+}

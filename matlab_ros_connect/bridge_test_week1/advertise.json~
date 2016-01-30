@@ -1,0 +1,5 @@
+{ 
+  "op": "advertise",
+  "topic": "/hello1",
+  "type": "geometry_msgs/Twist"
+}

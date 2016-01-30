@@ -1,0 +1,5 @@
+{ "op": "publish",
+  "topic": "/hello1",
+  "msg": { "linear":{"y": 0.0, "x": 2.0, "z": 0.0},"angular":{"y": 0.0, "x": 0.0, "z": 1.8}}
+}
+

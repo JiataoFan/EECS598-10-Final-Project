@@ -1,0 +1,5 @@
+{
+	"op":"subscribe",
+        "topic":"/hello1"
+        
+}

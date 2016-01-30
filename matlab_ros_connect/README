@@ -1,0 +1,41 @@
+　-----------------------------------------------------------------------
+
+                  For use of ros_matlab_bridge
+
+------------------------------------------------------------------------
+--------------------------Pre-configuation------------------------------
+step1:run MATLAB
+step2:>>pathtool
+step3:add /jsonlab/fsroot/json to the path(use add Folder), click save, if shows "cannot write the file", 
+make sure to use "chmod 777" to give your user account writing permission
+
+
+For ROS:
+Be sure to open tcpic server  "rosrun rosbridge_server rosbridge_tcp.py"
+
+
+
+--------------------------------Subscribe a topic------------------------------------
+Set subs=true, 
+
+The sample susbscribe Json message is "subscribe.json" 
+
+you can change the topic you want to subscribe 
+
+the output will be show on the screen if MATLAB recieves data (ans={})
+
+
+
+
+--------------------------------advertise a topic and pulish info------------------------------------
+Set ad_pub=true
+
+The sample susbscribe Json message is "advertise.json" 
+
+The sample susbscribe Json message is "publish.json" 
+
+You can change the name of the topic you want to create by change the topic name in "advertise.json" 
+
+If the topic is ALREADY exist, please comment the advertise and just use publish
+
+You can change the name of the data and typy of data you want to publish in "publish.json" 

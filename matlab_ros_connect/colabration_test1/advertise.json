@@ -1,0 +1,5 @@
+{ 
+  "op": "advertise",
+  "topic": "/fetchgrasp",
+  "type": "fetchgrasp"
+}
